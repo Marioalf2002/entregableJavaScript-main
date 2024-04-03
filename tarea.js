@@ -16,6 +16,9 @@ const filterEvenNumbers = (array) => {
 // Parámetros: array (Array) - Un array de números
 // Devuelve: Number - El mayor número en el array
 const findMaxNumber = (array) => {
+  if (array.length === 0) {
+    return undefined;
+  }
   return Math.max(...array);
 };
 
@@ -90,7 +93,13 @@ const agregarHabilidad = (jugador, nuevaHabilidad) => {
 // Retorna:
 // - Un número que representa la duración total de todas las películas en minutos.
 const calcularDuracionTotal = (peliculas) => {
-  return peliculas.reduce((total, pelicula) => total + pelicula.duracion, 0);
+  const duracionesValidas = peliculas.filter(
+    (pelicula) => pelicula.duracion >= 0
+  );
+  return duracionesValidas.reduce(
+    (total, pelicula) => total + pelicula.duracion,
+    0
+  );
 };
 
 // Función para buscar películas por título y género.
@@ -101,6 +110,15 @@ const calcularDuracionTotal = (peliculas) => {
 // Retorna:
 // - Un array de objetos que representan películas que coinciden con el título y el género especificados.
 const buscarPeliculas = (peliculas, titulo, genero) => {
+  if (!titulo && !genero) {
+    return peliculas;
+  }
+  if (!titulo) {
+    return peliculas.filter((pelicula) => pelicula.genero === genero);
+  }
+  if (!genero) {
+    return peliculas.filter((pelicula) => pelicula.titulo.includes(titulo));
+  }
   return peliculas.filter(
     (pelicula) => pelicula.titulo.includes(titulo) && pelicula.genero === genero
   );
@@ -112,11 +130,18 @@ const buscarPeliculas = (peliculas, titulo, genero) => {
 // Retorna:
 // - Un número que representa el promedio de puntajes de todas las películas.
 const calcularPromedioPuntajes = (peliculas) => {
-  const sum = peliculas.reduce(
+  if (peliculas.length === 0) {
+    return 0;
+  }
+
+  const peliculasValidas = peliculas.filter(
+    (pelicula) => pelicula.puntaje >= 0
+  );
+  const sum = peliculasValidas.reduce(
     (total, pelicula) => total + pelicula.puntaje,
     0
   );
-  return sum / peliculas.length;
+  return sum / peliculasValidas.length;
 };
 
 // Función para filtrar películas por año de lanzamiento.
@@ -126,7 +151,12 @@ const calcularPromedioPuntajes = (peliculas) => {
 // Retorna:
 // - Un array de objetos que representan películas lanzadas en el año especificado.
 const filtrarPorAño = (peliculas, año) => {
-  return peliculas.filter((pelicula) => pelicula.año === año);
+  if (!año) {
+    return peliculas;
+  }
+  return peliculas.filter(
+    (pelicula) => pelicula.año && pelicula.año.toString() === año.toString()
+  );
 };
 
 // Función para calcular el promedio de duración de las películas por género.
@@ -137,8 +167,11 @@ const filtrarPorAño = (peliculas, año) => {
 // - Un número que representa el promedio de duración de las películas del género especificado.
 const calcularPromedioDuracionPorGenero = (peliculas, genero) => {
   const filteredPeliculas = peliculas.filter(
-    (pelicula) => pelicula.genero === genero
+    (pelicula) => pelicula.genero.toLowerCase() === genero.toLowerCase()
   );
+  if (filteredPeliculas.length === 0) {
+    return 0;
+  }
   const sum = filteredPeliculas.reduce(
     (total, pelicula) => total + pelicula.duracion,
     0
@@ -208,7 +241,7 @@ class Automovil extends Vehiculo {
    * @returns {string} - La información del automóvil en formato de cadena de texto.
    */
   obtenerInformacion() {
-    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Color: ${this.color}, Cilindrada: ${this.cilindrada}, Potencia: ${this.potencia}, Número de Puertas: ${this.numPuertas}, Número de Asientos: ${this.numAsientos}, Tipo de Transmisión: ${this.tipoTransmision}`;
+    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Color: ${this.color}, Cilindrada: ${this.cilindrada}, Potencia: ${this.potencia}, Puertas: ${this.numPuertas}, Asientos: ${this.numAsientos}, Transmisión: ${this.tipoTransmision}`;
   }
 }
 
@@ -248,7 +281,7 @@ class Motocicleta extends Vehiculo {
    * @returns {string} - La información de la motocicleta en formato de cadena de texto.
    */
   obtenerInformacion() {
-    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Color: ${this.color}, Cilindrada: ${this.cilindrada}, Potencia: ${this.potencia}, Número de Ruedas: ${this.numRuedas}, Tipo: ${this.tipo}`;
+    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Color: ${this.color}, Cilindrada: ${this.cilindrada}, Potencia: ${this.potencia}, Ruedas: ${this.numRuedas}, Tipo: ${this.tipo}`;
   }
 }
 
@@ -291,7 +324,7 @@ class Camion extends Vehiculo {
    * @returns {string} - La información del camión en formato de cadena de texto.
    */
   obtenerInformacion() {
-    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Color: ${this.color}, Cilindrada: ${this.cilindrada}, Potencia: ${this.potencia}, Número de Ejes: ${this.numEjes}, Capacidad de Carga: ${this.capacidadCarga}, Tipo de Carrocería: ${this.tipoCarroceria}`;
+    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Color: ${this.color}, Cilindrada: ${this.cilindrada}, Potencia: ${this.potencia}, Ejes: ${this.numEjes}, Capacidad de Carga: ${this.capacidadCarga}, Tipo de Carrocería: ${this.tipoCarroceria}`;
   }
 }
 
@@ -334,7 +367,7 @@ class Autobus extends Vehiculo {
    * @returns {string} - La información del autobús en formato de cadena de texto.
    */
   obtenerInformacion() {
-    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Color: ${this.color}, Cilindrada: ${this.cilindrada}, Potencia: ${this.potencia}, Capacidad de Pasajeros: ${this.capacidadPasajeros}, Tipo de Combustible: ${this.tipoCombustible}, Tipo de Motor: ${this.tipoMotor}`;
+    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Color: ${this.color}, Cilindrada: ${this.cilindrada}, Potencia: ${this.potencia}, Pasajeros: ${this.capacidadPasajeros}, Combustible: ${this.tipoCombustible}, Tipo de Motor: ${this.tipoMotor}`;
   }
 }
 
@@ -377,7 +410,7 @@ class Bicicleta extends Vehiculo {
    * @returns {string} - La información de la bicicleta en formato de cadena de texto.
    */
   obtenerInformacion() {
-    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Tipo: ${this.tipo}, Número de Marchas: ${this.numMarchas}, Material: ${this.material}, Suspensión: ${this.suspencion}, Frenos: ${this.frenos}, Tipo de Manubrio: ${this.tipoManubrio}`;
+    return `Marca: ${this.marca}, Modelo: ${this.modelo}, Año: ${this.año}, Tipo: ${this.tipo}, Marchas: ${this.numMarchas}, Material: ${this.material}, Suspensión: ${this.suspencion}, Frenos: ${this.frenos}, Tipo de Manubrio: ${this.tipoManubrio}`;
   }
 }
 
